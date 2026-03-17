@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "423482815037",
+    "project_id": "jalals-outer-space-78978",
+    "storage_bucket": "jalals-outer-space-78978.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:423482815037:android:150e7ae90f95afa9bcb054",
+        "android_client_info": {
+          "package_name": "com.jdev.myspace"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzzhmsv5SwUxgYxibrRnJmvsrG3gVvGPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
