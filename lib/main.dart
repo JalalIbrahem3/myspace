@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:myspace/firebase_options.dart';
 import 'package:myspace/views/login_view.dart';
 import 'package:myspace/views/register_view.dart';
+import 'package:myspace/views/verify_email_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -16,7 +17,7 @@ void main() async {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const LoginView(),
+      home: const HomePage(),
       routes: {
         '/login/' : (context) => const LoginView(),
         '/register/' : (context) => const RegisterView()
@@ -37,6 +38,16 @@ class HomePage extends StatelessWidget {
         builder: (context, snapshot) {
           switch(snapshot.connectionState) {
             case ConnectionState.done:
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null){
+              if (user.emailVerified) {
+              print('Email is Verified !');
+              } else {
+              return VerifyEmailView();
+               }
+            } else {
+             return const LoginView();            }
+            return const Text('Done');
             /* final user = FirebaseAuth.instance.currentUser;
             if (user?.emailVerified ?? false) {
                return const Text('Done');
@@ -48,7 +59,6 @@ class HomePage extends StatelessWidget {
               );
               return const Text('Please verify your email');
             } */
-             return const LoginView();
             default: 
               return const CircularProgressIndicator();         
           }
