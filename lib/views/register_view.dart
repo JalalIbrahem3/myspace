@@ -99,6 +99,15 @@ class _RegisterViewState extends State<RegisterView> {
               },
                child: const Text('Register'), 
               ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/login/',
+                    (router) => false
+                    );
+                },
+                 child: const Text('You already have an account? Login here!')
+                 )
           ],
         );
         },

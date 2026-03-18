@@ -98,6 +98,15 @@ class _LoginViewState extends State<LoginView> {
               },
                child: const Text('Login babe'), 
               ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/register/',
+                    (router) => false
+                    );
+                },
+                 child: const Text('Not registered yet? Register here')
+                 )
           ],
         );
         },
