@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:myspace/constants/routes.dart';
 import 'package:myspace/main.dart';
 import 'dart:developer' as devtools show log;
 
@@ -29,7 +30,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 if (shouldLogout){
                   await FirebaseAuth.instance.signOut();
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/login/',
+                    loginRoute,
                     (router) => false
                   );
 
@@ -59,13 +60,13 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 if (user.emailVerified){
                   devtools.log('Hello World');
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/notes/',
+                    notesRoute,
                     (router) => false
                   );
                 }
               } else {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/login/',
+                  loginRoute,
                   (router) => false
                 );
               }
