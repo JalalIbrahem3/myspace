@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:myspace/firebase_options.dart';
+import 'dart:developer' as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -82,11 +83,14 @@ class _LoginViewState extends State<LoginView> {
                 final email = _email.text;
                 final password = _password.text;
                 try{
-                  final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                  email: email, password: password
+                  final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+                  devtools.log(userCredential.toString());
+                  devtools.log('login successful!');
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/notes/',
+                    (router) => false
                   );
-                  print(userCredential);
-                  print('login successful!');
+
                 } on FirebaseException catch (e){
                   print(e.code);
                  if (e.code == 'invalid-credential'){
