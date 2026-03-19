@@ -21,7 +21,8 @@ void main() async {
       routes: {
         '/login/' : (context) => const LoginView(),
         '/register/' : (context) => const RegisterView(),
-        '/notes/' : (context) => const NotesView()
+        '/notes/' : (context) => const NotesView(),
+        '/verify-email/' : (context) => const VerifyEmailView()
       }
     )
   );

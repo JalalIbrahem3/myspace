@@ -81,22 +81,34 @@ class _LoginViewState extends State<LoginView> {
             TextButton(
               onPressed: () async {
                 final email = _email.text;
-                final password = _password.text;
+                final password = _password.text; 
+
                 try{
                   final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-                  devtools.log(userCredential.toString());
+                  /* devtools.log(userCredential.toString());
                   devtools.log('login successful!');
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     '/notes/',
                     (router) => false
+                  ); */
+                  if (userCredential.user?.emailVerified ?? false) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/notes/',
+                    (router) => false
                   );
+                  } else {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/verify-email/',
+                    (router) => false
+                  );
+                  }
 
                 } on FirebaseException catch (e){
-                  print(e.code);
+                  devtools.log(e.code);
                  if (e.code == 'invalid-credential'){
                   Text('Invalid email or password');
                  } else{
-                  print('SOMETHING ELSE HAPPENS !');
+                  devtools.log('SOMETHING ELSE HAPPENS !');
                  }
                 }
               },
