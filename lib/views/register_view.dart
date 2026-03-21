@@ -3,7 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:myspace/constants/routes.dart';
 import 'package:myspace/firebase_options.dart';
-import 'dart:developer' as devtools show log;
+
+import 'package:myspace/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -29,24 +30,23 @@ class _RegisterViewState extends State<RegisterView> {
     _password.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Register'),
-        ),
+      appBar: AppBar(title: const Text('Register')),
       body: FutureBuilder(
-         future: Firebase.initializeApp(
+        future: Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
-         ),
+        ),
         builder: (context, snapshot) {
-          switch(snapshot.connectionState) {
+          switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               break;
 
             case ConnectionState.done:
               break;
-            
+
             case ConnectionState.none:
               // TODO: Handle this case.
               break;
@@ -55,65 +55,76 @@ class _RegisterViewState extends State<RegisterView> {
               break;
           }
           return Column(
-          children: [
-            TextField(
-              controller: _email,
-              enableSuggestions: true,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration : 
-              const InputDecoration(
-                hintText: 'Enter your email here'
+            children: [
+              TextField(
+                controller: _email,
+                enableSuggestions: true,
+                autocorrect: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your email here',
                 ),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration:
-              const InputDecoration(
-                hintText: 'Enter your password here'
+              ),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration: const InputDecoration(
+                  hintText: 'Enter your password here',
                 ),
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                try {
-                  final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email, password: password
-                  );
-                  devtools.log(userCredential.toString());
-                  devtools.log('register successful!');
-                } on FirebaseException catch (e){
-                  devtools.log(e.code);
-                  if (e.code == 'weak-passwors'){
-                    devtools.log('Your Passowrd is too WEAK');
-                  } else if (e.code == 'email-already-in-use'){
-                    devtools.log('This email is taken by someone else');
-                    } else if (e.code == 'invalid-email'){
-                      devtools.log('You have entered a wrong email');
+              ),
+              TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  try {
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: email,
+                      password: password,
+                    );
+                    final user = FirebaseAuth.instance.currentUser;
+                    await user?.sendEmailVerification();
+                    Navigator.of(context).pushNamed(verifyEmailRoute);
+                    
+                  } on FirebaseException catch (e) {
+                    if (e.code == 'weak-passwors') {
+                      await showErrorDialog(
+                        context,
+                        "the least password should be 6 characters long at least \n Error code: ${e.code}",
+                      );
+                    } else if (e.code == 'email-already-in-use') {
+                      await showErrorDialog(
+                        context,
+                        "This Email is Taken by another user \n please try another email \n Error code: ${e.code}",
+                      );
+                    } else if (e.code == 'invalid-email') {
+                      await showErrorDialog(
+                        context,
+                        "You have entered an invalid email \n Error code: ${e.code}",
+                      );
                     } else {
-                    devtools.log('SOMETHING BAD HAPPERNS !');
+                      await showErrorDialog(
+                        context,
+                        "Something Bad Happened,\n Error: ${e.code}",
+                      );
+                    }
                   }
-                }
-              },
-               child: const Text('Register'), 
+                },
+                child: const Text('Register'),
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    loginRoute,
-                    (router) => false
-                    );
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil(loginRoute, (router) => false);
                 },
-                 child: const Text('You already have an account? Login here!')
-                 )
-          ],
-        );
+                child: const Text('You already have an account? Login here!'),
+              ),
+            ],
+          );
         },
-      )
-      );
+      ),
+    );
   }
 }
