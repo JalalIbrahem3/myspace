@@ -58,7 +58,7 @@ class HomePage extends StatelessWidget {
             } else {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const VerifyEmailView(),
+                  builder: (context) => const VerifyEmail View(),
                 )
               );
               return const Text('Please verify your email');

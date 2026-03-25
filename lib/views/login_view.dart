@@ -82,20 +82,18 @@ class _LoginViewState extends State<LoginView> {
                   try {
                     final userCredential = await FirebaseAuth.instance
                         .signInWithEmailAndPassword(
-                          email: email,
+                          email: email, 
                           password: password,
                         );
-                    /* devtools.log(userCredential.toString());
-                  devtools.log('login successful!');
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    notesRoute,
-                    (router) => false
-                  ); */
-                    if (userCredential.user?.emailVerified ?? false) {
-                      Navigator.of(
-                        context,
-                      ).pushNamedAndRemoveUntil(notesRoute, (router) => false);
+                    final user = FirebaseAuth.instance.currentUser;
+                    // User Email is Verified
+                    if (user?.emailVerified ?? false) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        notesRoute,
+                         (router) => false
+                         );
                     } else {
+                      //User AMsil is NOT Verified
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         verifyEmailRoute,
                         (router) => false,
@@ -113,10 +111,7 @@ class _LoginViewState extends State<LoginView> {
                       );
                     }
                   } catch (e) {
-                    await showErrorDialog(
-                      context,
-                      e.toString(),
-                    );
+                    await showErrorDialog(context, e.toString());
                   }
                 },
                 child: const Text('Login babe'),
@@ -136,4 +131,3 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
-
