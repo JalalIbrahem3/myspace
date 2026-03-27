@@ -1,6 +1,7 @@
 import 'package:myspace/services/auth/auth_user.dart';
 
-abstract class AuthProviderr {
+abstract class AuthProvider {
+  Future<void> initialize();
   AuthUser? get currentUser;
   Future<AuthUser> logIn({
     required String email,

@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:myspace/constants/routes.dart';
-import 'package:myspace/firebase_options.dart';
+import 'package:myspace/services/auth/auth_exception.dart';
+import 'package:myspace/services/auth/auth_service.dart';
 
 import 'package:myspace/utilities/show_error_dialog.dart';
 
@@ -36,9 +35,7 @@ class _RegisterViewState extends State<RegisterView> {
     return Scaffold(
       appBar: AppBar(title: const Text('Register')),
       body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
+        future: AuthService.firebase().initialize(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -79,36 +76,32 @@ class _RegisterViewState extends State<RegisterView> {
                   final email = _email.text;
                   final password = _password.text;
                   try {
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                    await AuthService.firebase().createUser(
                       email: email,
                       password: password,
                     );
-                    final user = FirebaseAuth.instance.currentUser;
-                    await user?.sendEmailVerification();
+                    AuthService.firebase().sendEmailVerification();
                     Navigator.of(context).pushNamed(verifyEmailRoute);
-                    
-                  } on FirebaseException catch (e) {
-                    if (e.code == 'weak-passwors') {
-                      await showErrorDialog(
-                        context,
-                        "the least password should be 6 characters long at least \n Error code: ${e.code}",
-                      );
-                    } else if (e.code == 'email-already-in-use') {
-                      await showErrorDialog(
-                        context,
-                        "This Email is Taken by another user \n please try another email \n Error code: ${e.code}",
-                      );
-                    } else if (e.code == 'invalid-email') {
-                      await showErrorDialog(
-                        context,
-                        "You have entered an invalid email \n Error code: ${e.code}",
-                      );
-                    } else {
-                      await showErrorDialog(
-                        context,
-                        "Something Bad Happened,\n Error: ${e.code}",
-                      );
-                    }
+                  } on WeakPasswordAuthException catch (e) {
+                    await showErrorDialog(
+                      context,
+                      "the least password should be 6 characters long at least \n Error code: ${e.toString()}",
+                    );
+                  } on EmailAlreadyInUseAuthException catch (e){
+                    await showErrorDialog(
+                      context,
+                      "This Email is Taken by another user \n please try another email \n Error code: ${e.toString()}",
+                    );
+                  } on InvalidEmailAuthException catch (e){
+                    await showErrorDialog(
+                      context,
+                      "You have entered an invalid email \n Error code: ${e.toString()}",
+                    );
+                  } on GenericAuthException {
+                    await showErrorDialog(
+                      context,
+                      "Authintication Error",
+                    );
                   }
                 },
                 child: const Text('Register'),

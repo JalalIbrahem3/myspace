@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myspace/constants/routes.dart';
-import 'package:myspace/main.dart';
+import 'package:myspace/enums/menu_action.dart';
+import 'package:myspace/services/auth/auth_service.dart';
+import 'package:myspace/views/notes_views.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -9,8 +10,6 @@ class VerifyEmailView extends StatefulWidget {
   @override
   State<VerifyEmailView> createState() => _VerifyEmailViewState();
 }
-
-enum MenuAction { logout }
 
 class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
@@ -25,7 +24,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                 case MenuAction.logout:
                   final shouldLogout = await showLogOutDialog(context);
                   if (shouldLogout) {
-                    await FirebaseAuth.instance.signOut();
+                    await AuthService.firebase().logOut();
                     Navigator.of(
                       context,
                     ).pushNamedAndRemoveUntil(loginRoute, (router) => false);
@@ -56,10 +55,10 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
           ),
           TextButton(
             onPressed: () async {
-              final user = FirebaseAuth.instance.currentUser;
-              await user?.sendEmailVerification();
+              final user = AuthService.firebase().currentUser;
+              AuthService.firebase().sendEmailVerification();
               if (user != null) {
-                if (user.emailVerified) {
+                if (user.isEmailVerified) {
                   Navigator.of(
                     context,
                   ).pushNamedAndRemoveUntil(notesRoute, (router) => false);
@@ -74,7 +73,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
           ),
           TextButton(
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+              await AuthService.firebase().logOut();
               Navigator.of(context).pushNamedAndRemoveUntil(
                 loginRoute,
                  (route) => false

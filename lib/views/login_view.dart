@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:myspace/constants/routes.dart';
-import 'package:myspace/firebase_options.dart';
+import 'package:myspace/services/auth/auth_exception.dart';
+import 'package:myspace/services/auth/auth_service.dart';
 import 'package:myspace/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -36,9 +35,7 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
       body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
+        future: AuthService.firebase().initialize(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
@@ -80,38 +77,32 @@ class _LoginViewState extends State<LoginView> {
                   final password = _password.text;
 
                   try {
-                    final userCredential = await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                          email: email, 
-                          password: password,
-                        );
-                    final user = FirebaseAuth.instance.currentUser;
+                    await AuthService.firebase().logIn(
+                      email: email,
+                      password: password,
+                    );
+                    final user = AuthService.firebase().currentUser;
                     // User Email is Verified
-                    if (user?.emailVerified ?? false) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        notesRoute,
-                         (router) => false
-                         );
+                    if (user?.isEmailVerified ?? false) {
+                      Navigator.of(
+                        context,
+                      ).pushNamedAndRemoveUntil(notesRoute, (router) => false);
                     } else {
-                      //User AMsil is NOT Verified
+                      //User Email is NOT Verified
                       Navigator.of(context).pushNamedAndRemoveUntil(
                         verifyEmailRoute,
                         (router) => false,
                       );
                     }
-                  } on FirebaseException catch (e) {
-                    if (e.code == 'invalid-credential') {
-                      await showErrorDialog(context, 'User not found');
-                    } else if (e.code == 'wrong-password') {
-                      await showErrorDialog(context, 'Incorrect Password');
-                    } else {
-                      await showErrorDialog(
+                  } on UserNotFoundAuthException {
+                    await showErrorDialog(context, 'User not found');
+                  } on WrongPasswordAuthSException {
+                    await showErrorDialog(context, 'Incorrect Password');
+                  } on GenericAuthException {
+                    await showErrorDialog(
                         context,
-                        "Something happens while logging in \n please try again \n Error code: ${e.code}",
+                        "Authentication Error",
                       );
-                    }
-                  } catch (e) {
-                    await showErrorDialog(context, e.toString());
                   }
                 },
                 child: const Text('Login babe'),
