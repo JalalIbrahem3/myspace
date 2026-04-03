@@ -34,7 +34,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
             },
             itemBuilder: (context) {
               return const [
-                const PopupMenuItem<MenuAction>(
+                PopupMenuItem<MenuAction>(
                   value: MenuAction.logout,
                   child: Text('Logout'),
                 ),

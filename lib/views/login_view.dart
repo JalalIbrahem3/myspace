@@ -96,7 +96,7 @@ class _LoginViewState extends State<LoginView> {
                     }
                   } on UserNotFoundAuthException {
                     await showErrorDialog(context, 'User not found');
-                  } on WrongPasswordAuthSException {
+                  } on WrongPasswordAuthException {
                     await showErrorDialog(context, 'Incorrect Password');
                   } on GenericAuthException {
                     await showErrorDialog(
