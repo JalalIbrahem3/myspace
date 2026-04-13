@@ -29,10 +29,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.windows:
         return windows;
       case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return linux;
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
@@ -78,6 +75,16 @@ class DefaultFirebaseOptions {
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyAm97RbYw6JuL9d_jJlFWSC-QxtzJScNEs',
     appId: '1:423482815037:web:f8b2a3f626757a52bcb054',
+    messagingSenderId: '423482815037',
+    projectId: 'jalals-outer-space-78978',
+    authDomain: 'jalals-outer-space-78978.firebaseapp.com',
+    storageBucket: 'jalals-outer-space-78978.firebasestorage.app',
+  );
+
+  static const FirebaseOptions linux = FirebaseOptions(
+    apiKey:
+        'AIzaSyAm97RbYw6JuL9d_jJlFWSC-QxtzJScNEs', // انسخ نفس القيم الموجودة في قسم web في الأسفل
+    appId: '1:423482815037:web:caa3d5e544b256a4bcb054',
     messagingSenderId: '423482815037',
     projectId: 'jalals-outer-space-78978',
     authDomain: 'jalals-outer-space-78978.firebaseapp.com',
